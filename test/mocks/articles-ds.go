@@ -1,7 +1,6 @@
 package mocks
 
 import (
-	"log"
 	"time"
 
 	"github.com/govinda-attal/articles-api/pkg/articles"
@@ -49,7 +48,6 @@ func (am *ArticleMockDS) Add(art *articles.Article) (string, error) {
 
 // Get Mock.
 func (am *ArticleMockDS) Get(idS string) (*articles.Article, error) {
-	log.Println("Get Called", am.GetCall.Returns.Article)
 	am.GetCall.Receives.ArticleID = idS
 	return am.GetCall.Returns.Article, am.GetCall.Returns.Error
 }
