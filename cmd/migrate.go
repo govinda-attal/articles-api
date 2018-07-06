@@ -77,6 +77,7 @@ func migrateDB(cmd *cobra.Command, args []string) {
 	if err != nil {
 		os.Exit(1)
 	}
+	log.Println("articles migrate", action, "complete")
 }
 
 func init() {

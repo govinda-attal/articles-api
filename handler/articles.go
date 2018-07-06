@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -12,14 +11,22 @@ import (
 	"github.com/govinda-attal/articles-api/pkg/core/status"
 )
 
-// AddArticleHandler on HTTP POST request for article data in json format and stores it within the system.
-func AddArticleHandler(w http.ResponseWriter, r *http.Request) error {
+// ArticlesHandler implements methods to handle HTTP requests for the microservice.
+type ArticlesHandler struct {
+	artAPI articles.API
+}
+// NewArticleHandler returns a new HTTP handler instance for articles API
+func NewArticleHandler(artAPI articles.API) (*ArticlesHandler){
+	return &ArticlesHandler {artAPI}
+}
+
+// AddArticle on HTTP POST request for article JSON data stores it within the system.
+func (ah *ArticlesHandler) AddArticle(w http.ResponseWriter, r *http.Request) error {
 	article := articles.Article{}
 	if err := json.NewDecoder(r.Body).Decode(&article); err != nil {
 		return status.ErrBadRequest.WithMessage(err.Error())
 	}
-	api := articles.NewAPI()
-	id, err := api.Add(&article)
+	id, err := ah.artAPI.Add(&article)
 	if err != nil {
 		return err
 	}
@@ -29,19 +36,14 @@ func AddArticleHandler(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// FetchArticleHandler on HTTP GET request for a given article {id} and returns back its JSON representation.
-func FetchArticleHandler(w http.ResponseWriter, r *http.Request) error {
+// FetchArticle on HTTP GET request for a given article {id} and returns back its JSON representation.
+func (ah *ArticlesHandler)FetchArticle(w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
-	val, ok := vars["id"]
+	id, ok := vars["id"]
 	if !ok {
 		return status.ErrBadRequest
 	}
-	id, err := strconv.Atoi(val)
-	if err != nil {
-		return status.ErrBadRequest
-	}
-	api := articles.NewAPI()
-	article, err := api.Get(id)
+	article, err := ah.artAPI.Get(id)
 	if err != nil {
 		return err
 	}
@@ -50,9 +52,9 @@ func FetchArticleHandler(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// FetchArticleTagSummaryHandler on HTTP GET request and returns the list of articles that have that tag name on the given date.
+// FetchArticleTagSummary on HTTP GET request and returns the list of articles that have that tag name on the given date.
 // It also returns some summary data about that tag for that day.
-func FetchArticleTagSummaryHandler(w http.ResponseWriter, r *http.Request) error {
+func (ah *ArticlesHandler)FetchArticleTagSummary(w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	tag := vars["tagName"]
 	pdVar := vars["date"]
@@ -60,8 +62,7 @@ func FetchArticleTagSummaryHandler(w http.ResponseWriter, r *http.Request) error
 	if err != nil {
 		return status.ErrBadRequest
 	}
-	api := articles.NewAPI()
-	tagSumy, err := api.QueryTagSummaryForDay(tag, pd)
+	tagSumy, err := ah.artAPI.QueryTagSummaryForDay(tag, pd)
 	if err != nil {
 		return err
 	}

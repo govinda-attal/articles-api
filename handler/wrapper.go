@@ -7,12 +7,6 @@ import (
 	"github.com/govinda-attal/articles-api/pkg/core/status"
 )
 
-type key int
-
-const (
-	rqIDKey key = 0
-)
-
 // WrapperHandler is wrapper function to wrap API handlers and retuns as http.HandlerFunc.
 // API Handlers may return error, and this wrapper simplifies error handling for API Handlers.
 func WrapperHandler(f func(w http.ResponseWriter, r *http.Request) error) http.HandlerFunc {

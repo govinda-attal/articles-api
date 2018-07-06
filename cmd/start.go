@@ -14,6 +14,7 @@ import (
 	"github.com/urfave/negroni"
 
 	"github.com/govinda-attal/articles-api/handler"
+	"github.com/govinda-attal/articles-api/internal/ds"
 	"github.com/govinda-attal/articles-api/internal/provider"
 )
 
@@ -24,20 +25,24 @@ var startCmd = &cobra.Command{
 	Run:   startServer,
 }
 
-func startServer(cmd *cobra.Command, args []string) {
+func startServer(cmd *cobra.Command, args []string) {	
 	provider.Setup()
+	ads := ds.NewArticleDS()
+	artHandler := handler.NewArticleHandler(ads)
+
 	r := mux.NewRouter()
 
 	r.PathPrefix("/api/").Handler(http.StripPrefix("/api", http.FileServer(http.Dir("./api"))))
 
-	r.HandleFunc("/articles", handler.WrapperHandler(handler.AddArticleHandler)).Methods("POST")
-	r.HandleFunc("/articles/{id:[0-9]+}", handler.WrapperHandler(handler.FetchArticleHandler)).Methods("GET")
-	r.HandleFunc("/tags/{tagName}/{date:\\d{4,4}\\d{2,2}\\d{2,2}}", handler.WrapperHandler(handler.FetchArticleTagSummaryHandler)).Methods("GET")
+	r.HandleFunc("/articles", handler.WrapperHandler(artHandler.AddArticle)).Methods("POST")
+	r.HandleFunc("/articles/{id:[0-9]+}", handler.WrapperHandler(artHandler.FetchArticle)).Methods("GET")
+	r.HandleFunc("/tags/{tagName}/{date:\\d{4,4}\\d{2,2}\\d{2,2}}", handler.WrapperHandler(artHandler.FetchArticleTagSummary)).Methods("GET")
 
 	h := cors.Default().Handler(r)
 	n := negroni.New()
 	n.Use(negroni.NewLogger())
 	n.UseHandler(h)
+
 	srv := &http.Server{
 		Addr:         "0.0.0.0:9080",
 		WriteTimeout: time.Second * 15,
@@ -45,7 +50,9 @@ func startServer(cmd *cobra.Command, args []string) {
 		IdleTimeout:  time.Second * 60,
 		Handler:      n,
 	}
+
 	go func() {
+		defer provider.Cleanup()
 		if err := srv.ListenAndServe(); err != nil {
 			log.Println(err)
 		}
@@ -57,8 +64,7 @@ func startServer(cmd *cobra.Command, args []string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	srv.Shutdown(ctx)
-	log.Println("shutting down ...")
-	provider.Cleanup()
+	log.Println("articles server shutdown ...")
 	os.Exit(0)
 }
 

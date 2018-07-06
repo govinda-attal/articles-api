@@ -5,55 +5,55 @@ import (
 	"net/http"
 )
 
-// ErrInternal ...
+// ErrInternal represents internal server error.
 var ErrInternal = ErrServiceStatus{
 	ServiceStatus{Code: http.StatusInternalServerError, Message: "Internal Server Error"},
 }
 
-// ErrNotFound ...
+// ErrNotFound represents an error when a domain artifact was not found.
 var ErrNotFound = ErrServiceStatus{
 	ServiceStatus{Code: http.StatusNotFound, Message: "Not Found"},
 }
 
-// ErrBadRequest ...
+// ErrBadRequest represents an invalid request error.
 var ErrBadRequest = ErrServiceStatus{
 	ServiceStatus{Code: http.StatusBadRequest, Message: "Bad Request"},
 }
 
-// ErrUnauhtorized ...
+// ErrUnauhtorized represents an unauthorized request error.
 var ErrUnauhtorized = ErrServiceStatus{
 	ServiceStatus{Code: http.StatusUnauthorized, Message: "Unauthorized"},
 }
 
-// Success ...
+// Success represents a generic success.
 var Success = ServiceStatus{Code: http.StatusOK, Message: "OK"}
 
-// ServiceStatus ...
+// ServiceStatus captures basic information about a status construct.
 type ServiceStatus struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
-// ErrServiceStatus ...
+// ErrServiceStatus captures basic information about an error.
 type ErrServiceStatus struct {
 	ServiceStatus
 }
 
-func (e ErrServiceStatus) Error() string {
-	return fmt.Sprintf(string(e.Code), ": ", e.Message)
-}
-
-// WithMessage ...
+// WithMessage retuns an error status with given message.
 func (e ErrServiceStatus) WithMessage(msg string) ErrServiceStatus {
 	return ErrServiceStatus{ServiceStatus{Code: e.Code, Message: msg}}
 }
 
-// New ...
+// New returns a new status with given status instance.
 func New(ss ServiceStatus) ServiceStatus {
 	return ServiceStatus{ss.Code, ss.Message}
 }
 
-// NewUserDefined ...
+// NewUserDefined returns a new status with given code and message.
 func NewUserDefined(code int, msg string) ServiceStatus {
 	return ServiceStatus{Code: code, Message: msg}
+}
+
+func (e ErrServiceStatus) Error() string {
+	return fmt.Sprintf(string(e.Code), ": ", e.Message)
 }

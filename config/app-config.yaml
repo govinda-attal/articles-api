@@ -2,7 +2,7 @@ version: 1.0
 
 services:
   db:
-    host: database
+    host: localhost
     port: 5432
     username: postgres
     password: postgres
