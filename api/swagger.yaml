@@ -1,0 +1,127 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Articles API
+  contact:
+    name: Govinda Attal
+    email: govinda.attal@gmail.com
+host: localhost:9080
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /articles:
+    post:
+      description: Creates a new article
+      operationId: addArticle
+      parameters:
+        - name: article
+          in: body
+          description: An article to add to the store
+          required: true
+          schema:
+            $ref: '#/definitions/new-article'
+      responses:
+        '200':
+          description: article response
+          schema:
+            $ref: '#/definitions/article'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/error'
+  /articles/{id}:
+    get:
+      description: Returns an article based on given ID
+      operationId: findArticle
+      parameters:
+        - name: id
+          in: path
+          description: ID of an article to fetch
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: article response
+          schema:
+            $ref: '#/definitions/article'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/error'
+  /tags/{tagName}/{date}:
+    get:
+      description: returns the list of articles that have give tag on the given date
+      operationId: fetchArticleTagSummary
+      parameters:
+        - name: tagName
+          in: path
+          description: Name of a tag
+          required: true
+          type: string
+        - name: date
+          in: path
+          description: article publish date
+          required: true
+          type: string
+          pattern: '^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$'
+      responses:
+        '200':
+          description: article response
+          schema:
+            $ref: '#/definitions/article'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/error'
+    
+definitions:
+  article:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+  new-article:
+    type: object
+    required:
+      - title
+      - date
+      - body
+    properties:
+      title:
+        type: string
+      date:
+        type: string
+        format: date
+      body:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+  error:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string

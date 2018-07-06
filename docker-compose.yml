@@ -1,0 +1,49 @@
+version: '3'
+services:
+  database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports: 
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      - default
+  
+  articles-api:
+    container_name: articles-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME : articles
+    image:
+      gattal/articles-api
+    volumes:
+      # Creds location for basic network (may not to move this)
+      - ./config:/app/config
+    depends_on:
+      - database
+    ports: 
+      - 9080:9080
+    networks:
+      - default
+    command: sh -c "sleep 5s && ./articles migrate up && ./articles start"
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    restart: always
+    environment: 
+      - API_URL=http://localhost:9080/api/swagger.yaml
+    ports: 
+      - 8080:8080
+    depends_on:
+      - articles-api
+    networks:
+      - default
+        
+networks: 
+  default:

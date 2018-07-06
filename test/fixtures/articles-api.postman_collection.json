@@ -1,0 +1,97 @@
+{
+	"info": {
+		"_postman_id": "4d9ad4c4-9edd-4d5e-a6e7-27421a656527",
+		"name": "articles-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add Article",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"world-new\",\n  \"date\": \"2006-01-02\",\n  \"body\": \"hello world\",\n  \"tags\": [\n    \"hello-tag-new\",\n    \"world-tag-new\"\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9080/articles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9080",
+					"path": [
+						"articles"
+					]
+				},
+				"description": "http://localhost:9080/articles "
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Article",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:9080/articles/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9080",
+					"path": [
+						"articles",
+						"1"
+					]
+				},
+				"description": "http://localhost:9080/articles/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Tag Summary",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:9080/tags/hello-tag-new/20060102",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9080",
+					"path": [
+						"tags",
+						"hello-tag-new",
+						"20060102"
+					]
+				},
+				"description": "http://localhost:9080/tags/hello-tag-new/20060102"
+			},
+			"response": []
+		}
+	]
+}

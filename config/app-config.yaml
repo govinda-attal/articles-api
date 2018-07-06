@@ -1,0 +1,11 @@
+version: 1.0
+
+services:
+  db:
+    host: database
+    port: 5432
+    username: postgres
+    password: postgres
+    dbname: postgres
+
+  

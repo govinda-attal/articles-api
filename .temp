@@ -1,0 +1,80 @@
+CREATE SCHEMA IF NOT EXISTS ARTICLES;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+
+CREATE OR REPLACE FUNCTION ARTICLES.Trigger_SetTimestamp()  
+RETURNS TRIGGER AS $$  
+BEGIN  
+  NEW.last_updated = NOW();
+  RETURN NEW;
+END;  
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE TABLE IF NOT EXISTS ARTICLES.ARTICLE(
+    id serial NOT NULL,
+    title VARCHAR (255) UNIQUE NOT NULL,
+    publish_date DATE NOT NULL,
+    body TEXT NOT NULL,
+    tags TEXT[],
+    created_on TIMESTAMP NOT NULL DEFAULT NOW(),
+    last_updated TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+DROP TRIGGER IF EXISTS ArticleSetTimestamp ON ARTICLES.ARTICLE;
+
+CREATE TRIGGER ArticleSetTimestamp  
+BEFORE UPDATE ON ARTICLES.ARTICLE  
+FOR EACH ROW  
+EXECUTE PROCEDURE ARTICLES.Trigger_SetTimestamp();
+
+
+CREATE OR REPLACE FUNCTION ARTICLES.ARRAY_DISTINCT(anyarray) RETURNS anyarray AS $f$
+  SELECT array_agg(DISTINCT x) FROM unnest($1) t(x);
+$f$ LANGUAGE SQL IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION ARTICLES.ARRAY_DISTINCT_MINUS(anyarray, anyarray) RETURNS anyarray AS $f$
+  SELECT array_agg(DISTINCT x) FROM 
+	unnest(ARRAY(SELECT unnest($1) 
+               EXCEPT 
+               SELECT unnest($2))) t(x);
+$f$ LANGUAGE SQL IMMUTABLE;
+
+select ARRAY_DISTINCT_MINUS(array['a','b','c'],array['a']);
+
+
+
+CREATE OR REPLACE FUNCTION array_append_distinct(anyarray, anyelement) 
+RETURNS anyarray AS $$ 
+  SELECT ARRAY(SELECT unnest($1) union SELECT $2) 
+$$ LANGUAGE sql;
+
+
+CREATE OR REPLACE FUNCTION array_subtraction(anyarray, anyarray) 
+RETURNS anyarray AS $$
+  SELECT ARRAY(SELECT unnest($1) 
+               EXCEPT 
+               SELECT unnest($2))
+$$ LANGUAGE sql;
+
+select array_append_distinct(array['a','b','c'],'1');
+
+
+SELECT ARRAY(SELECT  DISTINCT UNNEST(tags) FROM articles.article WHERE '{"hello-tag"}' <@ tags) as t
+SELECT ARRAY(SELECT  id FROM articles.article  WHERE '{"hello-tag"}' <@ tags AND publish_date = '2006-01-02'::date ORDER BY created_on DESC LIMIT 2)
+
+
+SELECT array_distinct(array[1,1,1,1])
+
+select array_distinct(ARRAY(
+		SELECT UNNEST(tags) FROM articles.article WHERE '{"hello-tag"}' <@ tags 
+		AND publish_date = '2006-01-02'::date ORDER BY created_on DESC LIMIT 10))
+
+
+SELECT ARRAY(a.id) FROM (SELECT tags, id FROM articles.article WHERE '{"hello-tag"}' <@ tags) a;
+
+SELECT DISTINCT UNNEST(T.tags) FROM
+(SELECT tags, id FROM articles.article WHERE '{"hello-tag"}' <@ tags AND publish_date = '2006-01-02'::date ORDER BY created_on DESC LIMIT 2) T;
