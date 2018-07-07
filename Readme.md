@@ -121,10 +121,6 @@ To delete the source code for this microservice run :skull: cd $GOPATH/src/githu
 
 * [Govinda Attal](https://github.com/govinda-attal)
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
 ## Acknowledgments
 
 * [golang-standards/project-layout](https://github.com/golang-standards/project-layout)
