@@ -2,90 +2,124 @@
 
 A simple API with three endpoints.
 
-The first endpoint, POST /articles should handle the receipt of some article data in json format, and store it within the service.
+The first endpoint, POST /articles handles receipt of article data in json format, and stores it within the service.
 
-The second endpoint GET /articles/{id} should return the JSON representation of the article.
+The second endpoint GET /articles/{id} returns the JSON representation of the article.
 
-The final endpoint, GET /tags/{tagName}/{date} will return the list of articles that have that tag name on the given date and some summary data about that tag for that day.
+The final endpoint, GET /tags/{tagName}/{date} returns the list of articles that have that tag name on the given date and some summary data about that tag for that day.
 
-This implementation of above API was provided for requested code test.
+The source code implements this microservice (A Go code test).
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
 1. Linux OS - Ubuntu or Fedora is preferred.
 2. git
 3. Golang Setup locally on OS
-
-
-```
-Give examples
-```
+4. Postman for REST API testing
+5. Docker & Docker Compose
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+This application can be setup locally in following ways:
 
-Say what the step will be
-
+#### Option A
 ```
-Give the example
-```
-
-And repeat
-
-```
-until finished
+go get github.com/govinda-attal/articles-api
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
+#### Option B (Preferred) :heavy_check_mark:
 ```
-Give an example
+cd $GOPATH/src/github/
+mkdir govinda-attal
+cd govinda-attal
+git clone https://github.com/govinda-attal/articles-api.git
 ```
 
-### And coding style tests
+### Application Development Setup
 
-Explain what these tests test and why
+'Makefile' will be used to setup articles-api quickly on the development workstation.
 
 ```
-Give an example
+cd $GOPATH/src/github.com/govinda-attal/articles-api
+make install # This will go get 'dep' and use it to install vendor dependencies.
 ```
 
-## Deployment
+## Running Tests
 
-Add additional notes about how to deploy this on a live system
+### Unit tests
 
-## Built With
+Sample BDD Unit tests are implemented using ginkgo and gomega. These unit tests are written for HTTP handler only.
+Three Unit tests are written for this code test.
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+```
+cd $GOPATH/src/github.com/govinda-attal/articles-api
+make test # This will run execute unit tests with ginkgo -r command
+```
 
-## Contributing
+### Integration tests
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+This microservice achives given requirements with Golang and Postgres Database as backend. To keep this foot-print of this application minimum postgres db will execute within a docker container. Where as following backend microservice can be hosted within a docker container or local OS.
 
-## Versioning
+#### Option A: Docker Compose - orchestrate DB and Microservice as docker containers (Preferred) :heavy_check_mark:
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+```
+cd $GOPATH/src/github.com/govinda-attal/articles-api
+docker-compose up -d # This will start Postgres DB, Articles Microservice and Swagger-UI which will point to Articles microservice swagger definition.
+```
+
+Docker compose will orchestrate containers and they can be accessed from Local OS as below:
+1. Postgres DB on localhost:5432
+2. Microservice on :earth_asia: http://localhost:9080
+3. Swagger-UI on :earth_asia: http://localhost:8080
+
+#### Option B: Postgres as Docker container but Microservice is run locally on your OS
+
+```
+cd $GOPATH/src/github.com/govinda-attal/articles-api
+make db-local # This will host Postgres DB as docker container and its port 5432 is mapped to 5432 on Host OS.
+make db-migrate-up # This will run DB migrations to setup necessary postgres DB artefacts - Schema, Tables, Functions, Triggers, Indexes
+make serve # This will build the Microservice and run it locally and the API is exposed on port 9080 
+```
+
+### Postman Test Collection
+
+Start Postman and import sample test collection at
+``` 
+$GOPATH/src/github.com/govinda-attal/articles-api/test/fixtures/articles-api.postman_collection.json
+```
+
+### Swagger UI to view and trial Microservice Open API
+
+Post running command *docker-compose up -d* use browser to open :earth_asia: http://localhost:8080
+
+## Cleanup
+
+For containers orchestrated by Docker-compose
+```
+cd $GOPATH/src/github.com/govinda-attal/articles-api
+docker-compose down
+docker image rm gattal/articles-api:latest
+docker image rm postgres:latest
+```
+
+In case when Postgres DB was running as docker container with Microservice running locally
+```
+docker stop articles-db
+docker rm articles-db
+docker image rm postgres:latest 
+```
+Press Ctrl+C on the terminal on which microservice was running.
+
+
+To delete the source code for this microservice run :skull: cd $GOPATH/src/github.com/ && rm -rf  govinda-attal :skull: 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* [Govinda Attal](https://github.com/govinda-attal)
 
 ## License
 
@@ -93,6 +127,16 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* [golang-standards/project-layout](https://github.com/golang-standards/project-layout)
+* [Organizing Database Access](https://www.alexedwards.net/blog/organising-database-access)
+* [Standard Package Layout](https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1)
+* [Dependecy Injection, Mocking & TDD/BDD in Go](https://www.youtube.com/watch?v=uFXfTXSSt4I)
+* [Example Usage of net/http/httptest](https://golang.org/src/net/http/httptest/example_test.go)
+* [Unit testing handlers with Gorilla Mux](https://stackoverflow.com/questions/34435185/unit-testing-for-functions-that-use-gorilla-mux-url-parameters)
+* [Testing HTTP Handlers](https://blog.questionable.services/article/testing-http-handlers-go/)
+* [Ginkgo - A Golang BDD Testing Framework](https://onsi.github.io/ginkgo/)
+* [Using Postgres Arrays with Golang](https://www.opsdash.com/blog/postgres-arrays-golang.html)
+* [Database Migrations in Golang](https://github.com/golang-migrate/migrate)
+* [Gorilla Mux](https://github.com/gorilla/mux)
+* [Negroni Middleware](https://github.com/urfave/negroni)
+* [Technical Test API Specification](https://ffxblue.github.io/interview-tests/test/article-api/)
