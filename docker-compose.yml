@@ -9,8 +9,8 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     ports: 
       - 5432:5432
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data/pgdata
+    # volumes:
+    #   - ./test/fixtures/pgdata:/var/lib/postgresql/data/pgdata
     networks:
       - default
   

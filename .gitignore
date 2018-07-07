@@ -2,3 +2,4 @@ debug*
 /vendor
 /dist
 /config/crypto-config
+/test/fixtures/pgdata

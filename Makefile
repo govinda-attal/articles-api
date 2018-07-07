@@ -1,4 +1,4 @@
-.PHONY: init install test build serve clean pack deploy ship run
+.PHONY: init install test build db-local db-migrate-up db-migrate-down serve clean pack deploy ship run
 
 include .env
 export $(shell sed 's/=.*//' .env)
@@ -21,8 +21,19 @@ build:
 	mkdir dist/config
 	GOOS=linux GOARCH=amd64 go build -o ./dist/$(APP_NAME) .
 	cp ./test/fixtures/app-config-local.yaml ./dist/config/app-config.yaml
+
+db-local:
+	docker run --name $(APP_NAME)-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -p 5432:5432 -d postgres
+	sleep 5s && 
+
+db-migrate-up: build
+	cd dist && cp -r ../migrations . && ./$(APP_NAME) migrate up
+
+db-migrate-down: build
+	cd dist && cp -r ../migrations . && ./$(APP_NAME) migrate down
+
 serve: build
-	./dist/$(APP_NAME) start
+	cd dist && ./$(APP_NAME) start
 
 clean:
 	rm ./dist/ -rf

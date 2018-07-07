@@ -11,17 +11,17 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "Content-Type",
+						"key": "Accept",
 						"value": "application/json"
 					},
 					{
-						"key": "Accept",
+						"key": "Content-Type",
 						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"title\": \"world-new\",\n  \"date\": \"2006-01-02\",\n  \"body\": \"hello world\",\n  \"tags\": [\n    \"hello-tag-new\",\n    \"world-tag-new\"\n  ]\n}"
+					"raw": "{\n  \"title\": \"hello-world\",\n  \"date\": \"2006-01-02\",\n  \"body\": \"hello-world-body\",\n  \"tags\": [\n    \"hello-tag\",\n    \"world-tag\"\n  ]\n}"
 				},
 				"url": {
 					"raw": "http://localhost:9080/articles",
@@ -77,7 +77,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://localhost:9080/tags/hello-tag-new/20060102",
+					"raw": "http://localhost:9080/tags/hello-tag/20060102",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -85,11 +85,11 @@
 					"port": "9080",
 					"path": [
 						"tags",
-						"hello-tag-new",
+						"hello-tag",
 						"20060102"
 					]
 				},
-				"description": "http://localhost:9080/tags/hello-tag-new/20060102"
+				"description": "http://localhost:9080/tags/hello-tag/20060102"
 			},
 			"response": []
 		}
