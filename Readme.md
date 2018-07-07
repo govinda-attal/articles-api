@@ -164,11 +164,18 @@ To delete the source code for this microservice run :skull: cd $GOPATH/src/githu
 
 10. Need to have custom but simple strategy for error handling. So error structure will include code and message when returned by API. Intentionally error code are mapped to relevant HTTP Status codes for simplicity and easy comprehension, but there is also an option to have more application specific code.
 
-11. Dockerize API : hence Docker File
+11. Dockerize API : hence Docker File in project root directory.
 
-12. API Configuration (like DB endpoint information) managed externally within configuration file. Hence use [Viper - Configuration with Fangs](https://github.com/spf13/viper)
+12. API Configuration (like DB endpoint information) managed externally within configuration file. Hence use [Viper - Configuration with Fangs](https://github.com/spf13/viper).
 
 13. Microservice to follow CLI style dictated by popular framework like [Cobra](https://github.com/spf13/cobra). To be nice, microservice is a cli with subcommands
-    - start - starts the server to listen to HTTP requests
-    - migrate up|down - to manage provider database migrations
+    - start - starts the server to listen to HTTP requests.
+    - migrate up|down - to manage provider database migrations.
 
+14. As there is need DB, a simple approach to perform integration testing locally was required. So use of docker-compose was made feasible. Docker containers for: Postgres, Microservice and Swagger UI. For Simplicity test/fixtures/ include postman collection.
+
+15. Dependency management with [dep](https://github.com/golang/dep)
+
+16. Use of .gitignore, .dockerignore
+
+17. Developers (Me too) love Makefile(s).
