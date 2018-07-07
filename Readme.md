@@ -33,7 +33,7 @@ go get github.com/govinda-attal/articles-api
 
 #### Option B (Preferred) :heavy_check_mark:
 ```
-cd $GOPATH/src/github/
+cd $GOPATH/src/github.com/
 mkdir govinda-attal
 cd govinda-attal
 git clone https://github.com/govinda-attal/articles-api.git
