@@ -132,6 +132,7 @@ To delete the source code for this microservice run :skull: cd $GOPATH/src/githu
 * [Testing HTTP Handlers](https://blog.questionable.services/article/testing-http-handlers-go/)
 * [Ginkgo - A Golang BDD Testing Framework](https://onsi.github.io/ginkgo/)
 * [Using Postgres Arrays with Golang](https://www.opsdash.com/blog/postgres-arrays-golang.html)
+* [Postgres Array Functions](https://postgres.cz/wiki/Array_based_functions)
 * [Database Migrations in Golang](https://github.com/golang-migrate/migrate)
 * [Gorilla Mux](https://github.com/gorilla/mux)
 * [Negroni Middleware](https://github.com/urfave/negroni)
