@@ -19,6 +19,7 @@ build:
 	mkdir dist/config
 	GOOS=linux GOARCH=amd64 go build -o ./dist/$(APP_NAME) .
 	cp ./test/fixtures/app-config-local.yaml ./dist/config/app-config.yaml
+	cp ./migrations ./dist/ -r
 
 db-local:
 	docker run --name $(APP_NAME)-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -p 5432:5432 -d postgres

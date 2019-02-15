@@ -16,6 +16,7 @@ RUN apk -U add ca-certificates
 WORKDIR /app
 COPY --from=build-env /go/src/github.com/govinda-attal/articles-api/$APP_NAME /app/
 COPY --from=build-env /go/src/github.com/govinda-attal/articles-api/config/app-config.yaml /app/config/app-config.yaml
+COPY --from=build-env /go/src/github.com/govinda-attal/articles-api/migrations /app/
 
 VOLUME [ "/app/config" ]
 EXPOSE 9080
